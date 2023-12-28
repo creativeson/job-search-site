@@ -31,52 +31,57 @@ def index():
 def result():
     conn = get_db_connection()
     cursor = conn.cursor(buffered=True)
+    try:
+        # Execute the SQL query
+        query = """
+        SELECT url, title, 
+           CONCAT(LEFT(job_description, 100),"...") AS job_description, 
+           new_random_string
+            FROM jobs_backup
+            LIMIT 10;
+        """
+        cursor.execute(query)
 
-    # Execute the SQL query
-    query = """
-    SELECT url, title, 
-       CONCAT(LEFT(job_description, 100),"...") AS job_description
-        FROM jobs
-        LIMIT 10;
-    """
-    cursor.execute(query)
+        # Fetch all rows from the query
+        rows = cursor.fetchall()
 
-    # Fetch all rows from the query
-    rows = cursor.fetchall()
+        # Format the results
+        results = []
+        for row in rows:
+            result = {"url": row[0], "title": row[1], "description": row[2], "new_random_string": row[3]}
+            results.append(result)
 
-    # Format the results
-    results = []
-    for row in rows:
-        result = {"url": row[0], "title": row[1], "description": row[2]}
-        results.append(result)
+        print(results)
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
 
-    print(results)
+    finally:
+        # Close the connection
+        cursor.close()
+        conn.close()
 
-    # Close the connection
-    cursor.close()
-    conn.close()
-
-    # results = [
-    #     {"url": "https://free.com.tw/diffchecker/", "title": "new stuff - 在線文本對比工具", "description": "使用 DiffChecker，您可以快速比較兩段文本的差異。"},
-    #     {"url": "https://free.com.tw/diffnow/", "title": "DiffNow - 立即比較文本、文件和目錄", "description": "DiffNow 允許您比較內容，包括文本和文件夾，簡單易用。"},
-    #     # 添加更多資料，直到達到 10 筆
-    #     # ...
-    # ]
+    # results = [ {"url": "https://free.com.tw/diffchecker/", "title": "new stuff - 在線文本對比工具", "description": "使用
+    # DiffChecker，您可以快速比較兩段文本的差異。"}, ]
     return render_template('search_result.html', results=results)
 
 
-@app.route('/')
-def job_listing():
+@app.route('/job_content/<new_random_string>')
+def job_listing(new_random_string):
     conn = get_db_connection()
     cursor = conn.cursor(buffered=True)
+    job_data = None  # Initialize job_data to None or a suitable default value
 
-    # 假設您的表名為 'jobs'，並且有相應的列
     try:
         # 假設您的表名為 'jobs'，並且有相應的列
         cursor.execute(
-            "SELECT title, company_name, job_description, salary_range, address, other_info, url FROM jobs limit 1 offset 2;")
+            '''SELECT title, company_name, job_description, 
+            salary_range, address, other_info, url 
+            FROM jobs_backup where new_random_string = %s;''', (new_random_string,))
         job_data = cursor.fetchone()
-        print(job_data)
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+
     finally:
         cursor.close()
         conn.close()
