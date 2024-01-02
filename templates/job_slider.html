@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* CSS styles go here */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .slider-container {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            overflow: hidden;
+
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease;
+
+        }
+        .slide {
+            min-width: 33.33%; /* Each slide is 1/3rd of the container */
+            box-sizing: border-box;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            margin:10px;
+            margin-bottom: 20px; /* Add margin to create a gap between slides */
+            padding: 20px; /* Add padding if needed to separate content inside each slide */
+            border: 1px solid #ccc; /* Optional: Add a border to visually separate slides */
+        }
+
+        .slide a{
+          text-decoration: none; /* Remove the default underline */
+            color: white; /* Optional: Set the link color */
+            }
+
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+        }
+
+        .slide h2 {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .slide p.company {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .slide p.description {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .slide-button {
+            position: fixed;
+            bottom: 20px;
+            background-color: #ddd;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .left {
+            left: 100px;
+        }
+
+        .right {
+            right: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slider">
+            <!-- Slide Group 1 -->
+             <!-- Iterate over results and display them -->
+            {% for job in morejobs %}
+            <div class="slide">
+                <a href="{{ url_for('job_listing', new_random_string=job.new_random_string)}}" target="_blank">
+                    <div class="slide-header">
+                        <h2>{{ result.title }}</h2>
+                        <p class="company">{{ result.company }}</p>
+                    </div>
+                    <p class="description">{{ result.description }}</p>
+                </a>
+            </div>
+            {% endfor %}
+
+            <div class="slide">
+                <a href="job_link_1"> <!-- Add the link here -->
+                    <div class="slide-header">
+                        <h2>Job Title 1</h2>
+                        <p class="company">Company Name 1</p>
+                    </div>
+                    <p class="description">Short description of the job...</p>
+                </a>
+            </div>
+
+            <div class="slide">
+                <a href="job_link_2"> <!-- Add the link here -->
+                    <div class="slide-header">
+                        <h2>Job Title 2</h2>
+                        <p class="company">Company Name 2</p>
+                    </div>
+                    <p class="description">Short description of the job...</p>
+                </a>
+            </div>
+
+            <div class="slide">
+                <a href="job_link_3"> <!-- Add the link here -->
+                    <div class="slide-header">
+                        <h2>Job Title 3</h2>
+                        <p class="company">Company Name 3</p>
+                    </div>
+                    <p class="description">Short description of the job...</p>
+                </a>
+            </div>
+            <!-- Slide Group 2 -->
+            <div class="slide">
+                <a href="job_link_4"> <!-- Add the link here -->
+                    <div class="slide-header">
+                        <h2>Job Title 4</h2>
+                        <p class="company">Company Name 4</p>
+                    </div>
+                    <p class="description">Short description of the job...</p>
+                </a>
+            </div>
+
+            <div class="slide">
+                <a href="job_link_5"> <!-- Add the link here -->
+                    <div class="slide-header">
+                        <h2>Job Title 5</h2>
+                        <p class="company">Company Name 5</p>
+                    </div>
+                    <p class="description">Short description of the job...</p>
+                </a>
+            </div>
+
+            <div class="slide">
+                <a href="job_link_6"> <!-- Add the link here -->
+                    <div class="slide-header">
+                        <h2>Job Title 6</h2>
+                        <p class="company">Company Name 6</p>
+                    </div>
+                    <p class="description">Short description of the job...</p>
+                </a>
+            </div>
+
+            <!-- Add more slides as needed -->
+        </div>
+    </div>
+    <button class="slide-button left" onclick="moveSlide(-1)">&#10094;</button>
+    <button class="slide-button right" onclick="moveSlide(1)">&#10095;</button>
+
+    <script>
+        // JavaScript goes here
+        let currentSlide = 0;
+
+        function moveSlide(direction) {
+            const slides = document.querySelectorAll(".slide");
+            const totalSlideGroups = Math.ceil(slides.length / 3);
+
+            currentSlide += direction;
+
+            if (currentSlide >= totalSlideGroups) {
+                currentSlide = 0;
+            } else if (currentSlide < 0) {
+                currentSlide = totalSlideGroups - 1;
+            }
+
+            const slider = document.querySelector(".slider");
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+    </script>
+</body>
+</html>

@@ -4,19 +4,8 @@
 
 {% block content %}
   <div class="container mt-4">
-        <!-- Search box section -->
-        <div class="row justify-content-center">
-            <div class="col-md-8 search-box">
-                  <h1>搜尋關鍵字</h1>
-                <form method="GET" action="/">
-                    <div class="mb-3">
-                        <input type="text" name="query" class="form-control" placeholder="輸入關鍵字">
-                    </div>
-                    <button type="submit" class="btn btn-primary">搜尋</button>
-                </form>
-            </div>
-        </div>
-    </div>
+<!--         Search box section-->
+{% include 'search_box.html' %}
       <style>
         body {
             background-color: #343a40; /* Dark background for the page */

@@ -1,0 +1,32 @@
+<div class="container mt-4">
+<!--         Search box section-->
+      <div class="row justify-content-center">
+            <div class="col-md-8 search-box">
+                  <h1>搜尋關鍵字</h1>
+                <form>
+                    <div class="mb-3">
+                        <input type="text" name="query" class="form-control" placeholder="輸入關鍵字">
+                    </div>
+
+                <!-- Salary Constraint Input -->
+                <div class="mb-3">
+                    <input type="number" class="form-control" placeholder="最低薪水">
+                </div>
+
+                {% include 'checkbox.html' %}
+
+                    <button type="submit" class="btn btn-primary">搜尋</button>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+
+<style>
+    .form-check {
+    display: inline-block;
+    margin-right: 20px; /* Add margin to create space between checkboxes */
+}
+
+</style>

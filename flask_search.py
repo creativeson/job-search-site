@@ -1,5 +1,9 @@
 import mysql.connector
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+import sys
+sys.path.append('/home/abu/PycharmProjects/job-algor/count')
+from text_to_job import recommend_custom
+
 
 app = Flask(__name__)
 
@@ -23,45 +27,20 @@ def index():
     if request.method == 'GET':
         query = request.args.get('query', '')  # Retrieve the query parameter
         if query:  # Check if the query is not empty
-            print(f'Searching for: {query}')
+            # print(f'Searching for: {query}')
+            return redirect(url_for('result', query=query))  # Redirect to /result with query
     return render_template('index.html')
 
 
-@app.route('/result')
+@app.route('/result', methods=['GET', 'POST'])
 def result():
-    conn = get_db_connection()
-    cursor = conn.cursor(buffered=True)
-    try:
-        # Execute the SQL query
-        query = """
-        SELECT url, title, 
-           CONCAT(LEFT(job_description, 100),"...") AS job_description, 
-           new_random_string
-            FROM jobs_backup
-            LIMIT 10;
-        """
-        cursor.execute(query)
-
-        # Fetch all rows from the query
-        rows = cursor.fetchall()
-
-        # Format the results
-        results = []
-        for row in rows:
-            result = {"url": row[0], "title": row[1], "description": row[2], "new_random_string": row[3]}
-            results.append(result)
-
-        print(results)
-    except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
-
-    finally:
-        # Close the connection
-        cursor.close()
-        conn.close()
-
-    # results = [ {"url": "https://free.com.tw/diffchecker/", "title": "new stuff - 在線文本對比工具", "description": "使用
-    # DiffChecker，您可以快速比較兩段文本的差異。"}, ]
+    if request.method == 'GET':
+        query = request.args.get('query', '')  # Retrieve the query parameter
+        if query:  # Check if the query is not empty
+            results = recommend_custom(query) if query else []
+            return render_template('search_result.html', results=results)
+    query = request.args.get('query', '')  # Retrieve the query parameter
+    results = recommend_custom(query) if query else []
     return render_template('search_result.html', results=results)
 
 

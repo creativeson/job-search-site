@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .checkbox-group label {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .city-checkboxes {
+            display: none;
+        }
+
+        .checkbox-group input[type="checkbox"]:checked + label + .city-checkboxes {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkbox-group">
+        <input type="checkbox" id="toggle-taipei" class="toggle-city-checkboxes">
+        <label for="toggle-taipei">台北市</label>
+        <div class="city-checkboxes">
+            <label><input type="checkbox"> 中正區（Zhongzheng District）</label><br>
+            <label><input type="checkbox"> 大同區（Datong District）</label><br>
+            <label><input type="checkbox"> 中山區（Zhongshan District）</label><br>
+            <label><input type="checkbox"> 松山區（Songshan District）</label><br>
+            <label><input type="checkbox"> 大安區（Da'an District）</label><br>
+            <label><input type="checkbox"> 萬華區（Wanhua District）</label><br>
+            <label><input type="checkbox"> 信義區（Xinyi District）</label><br>
+            <label><input type="checkbox"> 士林區（Shilin District）</label><br>
+            <label><input type="checkbox"> 北投區（Beitou District）</label><br>
+            <label><input type="checkbox"> 內湖區（Neihu District）</label><br>
+            <label><input type="checkbox"> 南港區（Nangang District）</label><br>
+            <label><input type="checkbox"> 文山區（Wenshan District）</label><br>
+        </div>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="toggle-newtaipei" class="toggle-city-checkboxes">
+        <label for="toggle-taipei">新北市</label>
+        <div class="city-checkboxes">
+          <label><input type="checkbox"> 板橋區（Banqiao District）</label><br>
+            <label><input type="checkbox"> 新莊區（Xinzhuang District）</label><br>
+            <label><input type="checkbox"> 中和區（Zhonghe District）</label><br>
+            <label><input type="checkbox"> 永和區（Yonghe District）</label><br>
+            <label><input type="checkbox"> 新店區（Xindian District）</label><br>
+            <label><input type="checkbox"> 樹林區（Shulin District）</label><br>
+            <label><input type="checkbox"> 鶯歌區（Yingge District）</label><br>
+            <label><input type="checkbox"> 三峡區（Sanxia District）</label><br>
+            <label><input type="checkbox"> 淡水區（Tamsui District）</label><br>
+            <label><input type="checkbox"> 汐止區（Xizhi District）</label><br>
+            <label><input type="checkbox"> 瑞芳區（Ruifang District）</label><br>
+            <label><input type="checkbox"> 土城區（Tucheng District）</label><br>
+            <label><input type="checkbox"> 三峡區（Sanxia District）</label><br>
+            <label><input type="checkbox"> 蘆洲區（Luzhou District）</label><br>
+            <label><input type="checkbox"> 五股區（Wugu District）</label><br>
+            <label><input type="checkbox"> 八里區（Bali District）</label><br>
+            <label><input type="checkbox"> 三芝區（Sanzhi District）</label><br>
+            <label><input type="checkbox"> 萬里區（Wanli District）</label><br>
+            <label><input type="checkbox"> 金山區（Jinshan District）</label><br>
+        </div>
+    </div>
+
+    <script>
+        const toggleCheckboxes = document.querySelectorAll('.toggle-city-checkboxes');
+
+        toggleCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const parentDiv = checkbox.parentElement;
+                const cityCheckboxes = parentDiv.querySelector('.city-checkboxes');
+                cityCheckboxes.style.display = checkbox.checked ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
