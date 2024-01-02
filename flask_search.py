@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for
 import sys
 sys.path.append('/home/abu/PycharmProjects/job-algor/count')
 from text_to_job import recommend_custom
-
+from url_to_job import recommend_more
 
 app = Flask(__name__)
 
@@ -46,6 +46,7 @@ def result():
 
 @app.route('/job_content/<new_random_string>')
 def job_listing(new_random_string):
+    global morejobs
     conn = get_db_connection()
     cursor = conn.cursor(buffered=True)
     job_data = None  # Initialize job_data to None or a suitable default value
@@ -57,6 +58,10 @@ def job_listing(new_random_string):
             salary_range, address, other_info, url 
             FROM jobs_backup where new_random_string = %s;''', (new_random_string,))
         job_data = cursor.fetchone()
+        # recommend more job base on the current url
+        url = job_data[6]
+        morejobs = recommend_more(url)
+        print(morejobs)
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")
@@ -64,7 +69,7 @@ def job_listing(new_random_string):
     finally:
         cursor.close()
         conn.close()
-    return render_template('job_listing.html', job=job_data)
+    return render_template('job_listing.html', job=job_data, morejobs=morejobs)
 
 
 if __name__ == '__main__':
