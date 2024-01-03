@@ -1,6 +1,7 @@
 import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for
 import sys
+
 sys.path.append('/home/abu/PycharmProjects/job-algor/count')
 from text_to_job import recommend_custom
 from url_to_job import recommend_more
@@ -20,6 +21,43 @@ config = {
 def get_db_connection():
     conn = mysql.connector.connect(**config)
     return conn
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # 從表單獲取數據
+        user_id = request.form['id']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        email = request.form['email']
+        name = request.form['name']
+        gender = request.form['gender']
+        education = request.form['education']
+        school = request.form['school']
+        experience = request.form['experience']
+
+        # 檢查 ID 是否存在於資料庫
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+
+        # 檢查密碼是否匹配和其他驗證...
+        # ...
+
+        if user:
+            # 使用者ID已存在
+            return "ID已存在，請重新輸入"
+        else:
+            # 註冊用戶
+            cursor.execute(
+                "INSERT INTO users (id, password, email, name, gender, education, school, experience) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                (user_id, password, email, name, gender, education, school, experience))
+            conn.commit()
+            return "註冊成功"
+
+    return render_template('register.html')
 
 
 @app.route('/', methods=['GET', 'POST'])
