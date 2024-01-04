@@ -60,22 +60,24 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
     if request.method == 'GET':
         query = request.args.get('query', '')  # Retrieve the query parameter
         if query:  # Check if the query is not empty
             # print(f'Searching for: {query}')
-            return redirect(url_for('result', query=query))  # Redirect to /result with query
+            return redirect(url_for('result'))  # Redirect to /result with query
     return render_template('index.html')
 
 
-@app.route('/result', methods=['GET', 'POST'])
+@app.route('/result', methods=['GET'])
 def result():
     if request.method == 'GET':
+        selected_districts = request.args.getlist('district')
+        print(selected_districts)
         query = request.args.get('query', '')  # Retrieve the query parameter
         if query:  # Check if the query is not empty
-            results = recommend_custom(query) if query else []
+            results = recommend_custom(query, selected_districts ) if query else []
             return render_template('search_result.html', results=results)
     query = request.args.get('query', '')  # Retrieve the query parameter
     results = recommend_custom(query) if query else []

@@ -8,9 +8,12 @@
         <div class="col-md-8 results-box">
             <!-- Iterate over results and display them -->
             {% for result in results %}
-            <div class="result-item">
-                <a href="{{ url_for('job_listing', new_random_string=result.new_random_string)}}" target="_blank">{{ result.title }}</a>
+            <div class="result-item" style="position: relative;">
+                <a href="{{ url_for('job_listing', new_random_string=result.new_random_string)}}"
+                   target="_blank"
+                   style="text-decoration: none";>{{ result.title }}</a>
                 <p>{{ result.description }}</p>
+                <span style="position: absolute; top: 5px; right: 20px;">{{ result.place }}</span>
             </div>
             {% endfor %}
         </div>
