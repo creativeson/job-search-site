@@ -18,21 +18,21 @@
     <div class="row">
         <div class="col-md-2">
             <div class="checkbox-group">
-                 <input type="checkbox" id="toggle-taipei" class="toggle-city-checkboxes" name="city" value="台北市">
+                 <input type="checkbox" id="toggle-taipei" class="toggle-city-checkboxes" name="city" value="台北市" checked>
                     <label for="toggle-taipei">台北市</label>
                     <div class="city-checkboxes">
-                        <label><input type="checkbox" name="district" value="中正區"> 中正區</label><br>
-                        <label><input type="checkbox" name="district" value="大同區"> 大同區</label><br>
-                        <label><input type="checkbox" name="district" value="中山區"> 中山區</label><br>
-                        <label><input type="checkbox" name="district" value="松山區"> 松山區</label><br>
-                        <label><input type="checkbox" name="district" value="大安區"> 大安區</label><br>
-                        <label><input type="checkbox" name="district" value="萬華區"> 萬華區</label><br>
-                        <label><input type="checkbox" name="district" value="信義區"> 信義區</label><br>
+                        <label><input type="checkbox" name="district" value="中正區" checked> 中正區</label><br>
+                        <label><input type="checkbox" name="district" value="大同區" checked> 大同區</label><br>
+                        <label><input type="checkbox" name="district" value="中山區" checked> 中山區</label><br>
+                        <label><input type="checkbox" name="district" value="松山區" checked> 松山區</label><br>
+                        <label><input type="checkbox" name="district" value="大安區" checked> 大安區</label><br>
+                        <label><input type="checkbox" name="district" value="萬華區" checked> 萬華區</label><br>
+                        <label><input type="checkbox" name="district" value="信義區" checked> 信義區</label><br>
                         <label><input type="checkbox" name="district" value="士林區"> 士林區</label><br>
                         <label><input type="checkbox" name="district" value="北投區"> 北投區</label><br>
                         <label><input type="checkbox" name="district" value="內湖區"> 內湖區</label><br>
-                        <label><input type="checkbox" name="district" value="南港區"> 南港區</label><br>
-                        <label><input type="checkbox" name="district" value="文山區"> 文山區</label><br>
+                        <label><input type="checkbox" name="district" value="南港區" checked> 南港區</label><br>
+                        <label><input type="checkbox" name="district" value="文山區" checked> 文山區</label><br>
                     </div>
             </div>
         </div>
@@ -43,9 +43,9 @@
                 <div class="city-checkboxes">
                     <label><input type="checkbox" name="district" value="板橋區"> 板橋區</label><br>
                     <label><input type="checkbox" name="district" value="新莊區"> 新莊區</label><br>
-                    <label><input type="checkbox" name="district" value="中和區"> 中和區</label><br>
-                    <label><input type="checkbox" name="district" value="永和區"> 永和區</label><br>
-                    <label><input type="checkbox" name="district" value="新店區"> 新店區</label><br>
+                    <label><input type="checkbox" name="district" value="中和區" checked> 中和區</label><br>
+                    <label><input type="checkbox" name="district" value="永和區" checked> 永和區</label><br>
+                    <label><input type="checkbox" name="district" value="新店區" checked> 新店區</label><br>
                     <label><input type="checkbox" name="district" value="樹林區"> 樹林區</label><br>
                     <label><input type="checkbox" name="district" value="鶯歌區"> 鶯歌區</label><br>
                     <label><input type="checkbox" name="district" value="三峡區"> 三峡區</label><br>
@@ -75,6 +75,29 @@
                 cityCheckboxes.style.display = checkbox.checked ? 'block' : 'none';
             });
         });
+
+
+<!--        document.addEventListener('DOMContentLoaded', (event) => {-->
+<!--    const toggleCheckboxes = document.querySelectorAll('.toggle-city-checkboxes');-->
+
+<!--    toggleCheckboxes.forEach(toggleCheckbox => {-->
+<!--        // Handle the initial display state-->
+<!--        const parentDiv = toggleCheckbox.parentElement;-->
+<!--        const cityCheckboxes = parentDiv.querySelector('.city-checkboxes');-->
+<!--        cityCheckboxes.style.display = toggleCheckbox.checked ? 'block' : 'none';-->
+
+<!--        // Event listener for the toggle checkbox-->
+<!--        toggleCheckbox.addEventListener('change', () => {-->
+<!--            const checkboxes = parentDiv.querySelectorAll('.city-checkboxes input[type="checkbox"]');-->
+<!--            checkboxes.forEach(checkbox => {-->
+<!--                checkbox.checked = toggleCheckbox.checked;-->
+<!--            });-->
+
+<!--            cityCheckboxes.style.display = toggleCheckbox.checked ? 'block' : 'none';-->
+<!--        });-->
+<!--    });-->
+<!--});-->
+
     </script>
 </body>
 </html>

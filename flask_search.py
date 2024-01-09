@@ -52,7 +52,8 @@ def register():
         else:
             # 註冊用戶
             cursor.execute(
-                "INSERT INTO users (id, password, email, name, gender, education, school, experience) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                "INSERT INTO users (id, password, email, name, gender, education, school, experience) VALUES (%s, %s, "
+                "%s, %s, %s, %s, %s, %s)",
                 (user_id, password, email, name, gender, education, school, experience))
             conn.commit()
             return "註冊成功"
@@ -64,6 +65,7 @@ def register():
 def index():
     if request.method == 'GET':
         query = request.args.get('query', '')  # Retrieve the query parameter
+
         if query:  # Check if the query is not empty
             # print(f'Searching for: {query}')
             return redirect(url_for('result'))  # Redirect to /result with query
@@ -73,6 +75,10 @@ def index():
 @app.route('/result', methods=['GET'])
 def result():
     if request.method == 'GET':
+
+        salary = request.args.get('salary', '')
+        print(salary)
+
         selected_districts = request.args.getlist('district')
         print(selected_districts)
         query = request.args.get('query', '')  # Retrieve the query parameter
