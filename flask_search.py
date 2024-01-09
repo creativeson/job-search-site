@@ -2,7 +2,8 @@ import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for
 import sys
 
-sys.path.append('/home/abu/PycharmProjects/job-algor/count')
+# sys.path.append('/home/abu/PycharmProjects/job-algor/count')
+sys.path.append('/Users/agv/Desktop/fantasticJobSite/job-algor/count')
 from text_to_job import recommend_custom
 from url_to_job import recommend_more
 
@@ -119,4 +120,4 @@ def job_listing(new_random_string):
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5050, debug=True)
