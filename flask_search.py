@@ -73,22 +73,38 @@ def index():
     return render_template('index.html')
 
 
+# @app.route('/result', methods=['GET'])
+# def result():
+    # if request.method == 'GET':
+
+    #     salary = request.args.get('salary', '')
+    #     print(salary)
+
+    #     selected_districts = request.args.getlist('district')
+    #     print(selected_districts)
+    #     query = request.args.get('query', '')  # Retrieve the query parameter
+    #     if query:  # Check if the query is not empty
+    #         results = recommend_custom(query, selected_districts ) if query else []
+    #         return render_template('search_result.html', results=results)
+    # query = request.args.get('query', '')  # Retrieve the query parameter
+    # results = recommend_custom(query) if query else []
+    # return render_template('search_result.html', results=results)
 @app.route('/result', methods=['GET'])
 def result():
-    if request.method == 'GET':
+    salary = request.args.get('salary', '')
+    print(salary)
 
-        salary = request.args.get('salary', '')
-        print(salary)
+    selected_districts = request.args.getlist('district')
+    print(selected_districts)
 
-        selected_districts = request.args.getlist('district')
-        print(selected_districts)
-        query = request.args.get('query', '')  # Retrieve the query parameter
-        if query:  # Check if the query is not empty
-            results = recommend_custom(query, selected_districts ) if query else []
-            return render_template('search_result.html', results=results)
     query = request.args.get('query', '')  # Retrieve the query parameter
-    results = recommend_custom(query) if query else []
+    if query:  # Check if the query is not empty
+        results = recommend_custom(query, selected_districts)
+    else:
+        results = []
+
     return render_template('search_result.html', results=results)
+
 
 
 @app.route('/job_content/<new_random_string>')
@@ -103,10 +119,11 @@ def job_listing(new_random_string):
         cursor.execute(
             '''SELECT title, company_name, job_description, 
             salary_range, address, other_info, url 
-            FROM jobs_backup where new_random_string = %s;''', (new_random_string,))
+            FROM combined_site_feature where new_random_string = %s;''', (new_random_string,))
         job_data = cursor.fetchone()
         # recommend more job base on the current url
         url = job_data[6]
+        print(url)
         morejobs = recommend_more(url)
         print(morejobs)
 
