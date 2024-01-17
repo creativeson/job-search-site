@@ -1,11 +1,16 @@
-import mysql.connector
+# import mysql.connector
+from mysql.connector import connect
 from flask import Flask, render_template, request, redirect, url_for
-import sys
+from sys import path
 
-# sys.path.append('/home/abu/PycharmProjects/job-algor/count')
-sys.path.append('/Users/agv/Desktop/fantasticJobSite/job-algor/count')
+path.append('./job-algor/count')
+# sys.path.append('../job-algor/count')
+# sys.path.append('/root/fantasticJobSite/job-algor/count')
+# from job_algor.text_to_job import recommend_custom
+# from job_algor.url_to_job import recommend_more
 from text_to_job import recommend_custom
 from url_to_job import recommend_more
+
 
 app = Flask(__name__)
 
@@ -20,7 +25,7 @@ config = {
 
 # 建立數據庫連接
 def get_db_connection():
-    conn = mysql.connector.connect(**config)
+    conn = connect(**config)
     return conn
 
 
@@ -91,6 +96,9 @@ def index():
     # return render_template('search_result.html', results=results)
 @app.route('/result', methods=['GET'])
 def result():
+    upper_bound_salary = request.args.get('upper_bound_salary', '')
+    print(upper_bound_salary)
+
     salary = request.args.get('salary', '')
     print(salary)
 
@@ -99,7 +107,7 @@ def result():
 
     query = request.args.get('query', '')  # Retrieve the query parameter
     if query:  # Check if the query is not empty
-        results = recommend_custom(query, selected_districts)
+        results = recommend_custom(query, salary, upper_bound_salary)
     else:
         results = []
 

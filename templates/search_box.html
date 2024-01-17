@@ -11,15 +11,22 @@
                 <!-- Salary Constraint Input -->
                 <div class="mb-3">
 <!--                    <input type="number" class="form-control" placeholder="最低年薪(萬元)以上">-->
+                        <label for="salary">年薪(萬元)上限:</label>
+                        <select name="upper_bound_salary" class="form-control" id="salary">
+                            {% for i in range(100, 200, 10) %}
+                                <option value="{{ i }}" {% if i == 100 %}selected{% endif %}>{{ i }}</option>
+                            {% endfor %}
+                        </select>
+
                     <label for="salary">最低年薪(萬元)以上:</label>
                         <select name="salary" class="form-control" id="salary">
-                            {% for i in range(60, 200, 20) %}
+                            {% for i in range(60, 200, 10) %}
                                 <option value="{{ i }}" {% if i == 60 %}selected{% endif %}>{{ i }}</option>
                             {% endfor %}
                         </select>
                 </div>
 
-                {% include 'checkbox.html' %}
+                <!-- {% include 'checkbox.html' %} -->
 
                     <button type="submit" class="btn btn-primary">搜尋</button>
                 </form>
