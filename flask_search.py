@@ -2,6 +2,7 @@
 from mysql.connector import connect
 from flask import Flask, render_template, request, redirect, url_for
 from sys import path
+import asyncio
 
 path.append('./job-algor/count')
 # sys.path.append('../job-algor/count')
@@ -95,7 +96,7 @@ def index():
     # results = recommend_custom(query) if query else []
     # return render_template('search_result.html', results=results)
 @app.route('/result', methods=['GET'])
-def result():
+async def result():
     upper_bound_salary = request.args.get('upper_bound_salary', '')
     print(upper_bound_salary)
 
@@ -107,7 +108,10 @@ def result():
 
     query = request.args.get('query', '')  # Retrieve the query parameter
     if query:  # Check if the query is not empty
-        results = recommend_custom(query, salary, upper_bound_salary)
+        # results = recommend_custom(query, salary, upper_bound_salary)
+        # 呼叫 recommend_job 函數來獲取推薦
+        results = await asyncio.to_thread(recommend_custom, query, salary, upper_bound_salary)
+
     else:
         results = []
 
@@ -145,4 +149,6 @@ def job_listing(new_random_string):
 
 
 if __name__ == '__main__':
+    import psutil
+    print(f"mem size of for loop before: {psutil.Process().memory_info().rss / 1024 / 1024}")
     app.run(host="0.0.0.0", port=5050, debug=True)
