@@ -1,5 +1,5 @@
 # import mysql.connector
-from mysql.connector import connect
+from mysql.connector import connect, Error
 from flask import Flask, render_template, request, redirect, url_for
 from sys import path
 import asyncio
@@ -20,7 +20,7 @@ config = {
     'host': 'localhost',
     'user': 'root',
     'password': '123456',
-    'database': 'job_data'
+    'database': 'combined_data'
 }
 
 
@@ -45,7 +45,7 @@ def register():
         experience = request.form['experience']
 
         # 檢查 ID 是否存在於資料庫
-        conn = mysql.connector.connect(**config)
+        conn = connect(**config)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
         user = cursor.fetchone()
@@ -137,9 +137,9 @@ def job_listing(new_random_string):
         url = job_data[6]
         print(url)
         morejobs = recommend_more(url)
-        print(morejobs)
+        print(morejobs[0])
 
-    except mysql.connector.Error as err:
+    except Error as err:
         print(f"MySQL Error: {err}")
 
     finally:
