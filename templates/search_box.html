@@ -5,24 +5,29 @@
                   <h1>搜尋關鍵字</h1>
                 <form action="/result" method="GET">
                     <div class="mb-3">
-                        <input type="text" name="query" class="form-control" placeholder="輸入關鍵字">
+                      <input type="text" name="query" class="form-control" placeholder="請輸入你會的IT技能" id="query" oninput="checkLength()">
                     </div>
 
                 <!-- Salary Constraint Input -->
                 <div class="mb-3">
 <!--                    <input type="number" class="form-control" placeholder="最低年薪(萬元)以上">-->
                         <label for="salary">年薪(萬元)上限:</label>
-                        <select name="upper_bound_salary" class="form-control" id="salary">
-                            {% for i in range(100, 2000, 100) %}
-                                <option value="{{ i }}" {% if i == 100 %}selected{% endif %}>{{ i }}</option>
+                        <select name="upper_bound_salary" class="form-control" id="upper_bound_salary">
+                            {% for i in range(100, 2000, 50) %}
+                                <option value="{{ i }}" {% if i == 150 %}selected{% endif %}>{{ i }}</option>
                             {% endfor %}
                         </select>
 
                     <label for="salary">最低年薪(萬元)以上:</label>
-                        <select name="salary" class="form-control" id="salary">
+                        <select name="salary" class="form-control" id="min_salary">
                             {% for i in range(60, 200, 10) %}
-                                <option value="{{ i }}" {% if i == 70 %}selected{% endif %}>{{ i }}</option>
-                            {% endfor %}
+                                <!-- <option value="{{ i }}" {% if i == 70 %}selected{% endif %}>{{ i }}</option> -->
+                                {% if i == 60 %}
+                                    <option value="{{ i }}" {% if i == 70 %}selected{% endif %}>{{ i }}(含面議)</option>
+                                {% else %}
+                                    <option value="{{ i }}" {% if i == 70 %}selected{% endif %}>{{ i }}</option>
+                                {% endif %}
+                            {% endfor %}   
                         </select>
                 </div>
 
@@ -30,13 +35,69 @@
 
                     <button type="submit" class="btn btn-primary">搜尋</button>
                 </form>
+                <p id="messageBox"></p>
             </div>
         </div>
     </div>
-
 <style>
     .form-check {
     display: inline-block;
     margin-right: 20px; /* Add margin to create space between checkboxes */
 }
 </style>
+
+<script>
+     function checkLength() {
+            const inputText = document.getElementById("query").value;
+            const submitButton = document.querySelector("button[type='submit']");
+            const messageBox = document.getElementById("messageBox");
+        
+            const excessLength = inputText.length - 500;
+        
+            if (excessLength > 0) {
+                submitButton.disabled = true;
+                messageBox.textContent = "您輸入的字數超過了限制，超出了 " + excessLength + " 個字。";
+            } else {
+                submitButton.disabled = false;
+                messageBox.textContent = "";
+            }
+        }
+    document.addEventListener("DOMContentLoaded", function () {
+  // 获取select元素
+  const upperBoundSalarySelect = document.getElementById("upper_bound_salary");
+  const minSalarySelect = document.getElementById("min_salary");
+  const queryInput = document.getElementById("query");
+
+  // 检查本地存储中是否已经有保存的值
+  const savedUpperBoundSalary = localStorage.getItem("upper_bound_salary");
+  const savedMinSalary = localStorage.getItem("min_salary");
+  const savedQuery = localStorage.getItem("query");
+
+  // 如果有保存的值，则将它们设置为select元素的值
+  if (savedUpperBoundSalary) {
+    upperBoundSalarySelect.value = savedUpperBoundSalary;
+  }
+
+  if (savedMinSalary) {
+    minSalarySelect.value = savedMinSalary;
+  }
+
+  if (savedQuery) {
+    queryInput.value = savedQuery;
+  }
+
+  // 监听select元素和输入框的变化事件，以保存新的值
+  upperBoundSalarySelect.addEventListener("change", function () {
+    localStorage.setItem("upper_bound_salary", upperBoundSalarySelect.value);
+  });
+
+  minSalarySelect.addEventListener("change", function () {
+    localStorage.setItem("min_salary", minSalarySelect.value);
+  });
+
+  queryInput.addEventListener("input", function () {
+    localStorage.setItem("query", queryInput.value);
+  });
+});
+  </script>
+  

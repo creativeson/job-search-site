@@ -5,12 +5,19 @@ from sys import path
 import asyncio
 
 path.append('./job-algor/count')
+from text_to_job import recommend_custom
+from url_to_job import recommend_more
+
+path.append('./job-algor/tfidf')
+from tfidf_text_to_job import recommend_custom_tfidf
+from tfidf_url_to_job import recommend_more_tfidf
+
+
 # sys.path.append('../job-algor/count')
 # sys.path.append('/root/fantasticJobSite/job-algor/count')
 # from job_algor.text_to_job import recommend_custom
 # from job_algor.url_to_job import recommend_more
-from text_to_job import recommend_custom
-from url_to_job import recommend_more
+
 
 
 app = Flask(__name__)
@@ -110,7 +117,7 @@ async def result():
     if query:  # Check if the query is not empty
         # results = recommend_custom(query, salary, upper_bound_salary)
         # 呼叫 recommend_job 函數來獲取推薦
-        results = await asyncio.to_thread(recommend_custom, query, salary, upper_bound_salary)
+        results = await asyncio.to_thread(recommend_custom_tfidf, query, salary, upper_bound_salary)
 
     else:
         results = []
@@ -121,22 +128,22 @@ async def result():
 
 @app.route('/job_content/<new_random_string>')
 def job_listing(new_random_string):
-    global morejobs
+    morejobs = None
     conn = get_db_connection()
     cursor = conn.cursor(buffered=True)
     job_data = None  # Initialize job_data to None or a suitable default value
 
     try:
-        # 假設您的表名為 'jobs'，並且有相應的列
         cursor.execute(
             '''SELECT title, company_name, job_description, 
             salary_range, address, other_info, url 
-            FROM combined_site_feature where new_random_string = %s;''', (new_random_string,))
+            FROM combined where new_random_string = %s AND 
+            parse_date = (SELECT MAX(parse_date) FROM combined );''', (new_random_string,))
         job_data = cursor.fetchone()
         # recommend more job base on the current url
         url = job_data[6]
         print(url)
-        morejobs = recommend_more(url)
+        morejobs = recommend_more_tfidf(url)
         print(morejobs[0])
 
     except Error as err:
