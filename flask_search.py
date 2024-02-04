@@ -3,10 +3,11 @@ from mysql.connector import connect, Error
 from flask import Flask, render_template, request, redirect, url_for
 from sys import path
 import asyncio
+import redis
 
 path.append('./job-algor/count')
 from text_to_job import recommend_custom
-from url_to_job import recommend_more
+# from url_to_job import recommend_more
 
 path.append('./job-algor/tfidf')
 from tfidf_text_to_job import recommend_custom_tfidf
@@ -21,6 +22,7 @@ from tfidf_url_to_job import recommend_more_tfidf
 
 
 app = Flask(__name__)
+redis_conn = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 # 數據庫配置
 config = {
@@ -36,6 +38,9 @@ def get_db_connection():
     conn = connect(**config)
     return conn
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -81,7 +86,6 @@ def index():
         query = request.args.get('query', '')  # Retrieve the query parameter
 
         if query:  # Check if the query is not empty
-            # print(f'Searching for: {query}')
             return redirect(url_for('result'))  # Redirect to /result with query
     return render_template('index.html')
 
@@ -105,24 +109,42 @@ def index():
 @app.route('/result', methods=['GET'])
 async def result():
     upper_bound_salary = request.args.get('upper_bound_salary', '')
-    print(upper_bound_salary)
-
     salary = request.args.get('salary', '')
-    print(salary)
-
-    selected_districts = request.args.getlist('district')
-    print(selected_districts)
-
     query = request.args.get('query', '')  # Retrieve the query parameter
-    if query:  # Check if the query is not empty
-        # results = recommend_custom(query, salary, upper_bound_salary)
-        # 呼叫 recommend_job 函數來獲取推薦
-        results = await asyncio.to_thread(recommend_custom_tfidf, query, salary, upper_bound_salary)
+    #print(f"{upper_bound_salary},{salary},{query}")
 
+    # selected_districts = request.args.getlist('district')
+    # print(selected_districts)
+
+    # 生成一個基於請求參數的唯一鍵
+    cache_key = f"{query}:{salary}:{upper_bound_salary}"
+     # 嘗試從Redis獲取緩存結果
+    cached_results = redis_conn.get(cache_key)
+    if cached_results:
+        print(f"found cache {cache_key}")
+        # 如果存在緩存，將字符串轉換回Python對象
+        results = eval(cached_results)  # 注意：使用eval()需要謹慎，確保數據安全
     else:
-        results = []
+        if query:
+            # 如果沒有緩存，執行計算
+            results = await asyncio.to_thread(recommend_custom, query, salary, upper_bound_salary)
+            # 將結果存儲到Redis，並設置過期時間
+            redis_conn.set(cache_key, str(results), ex=3600)  # 例如，設置1小時的過期時間
+        else:
+            results = []
 
     return render_template('search_result.html', results=results)
+
+    # query = request.args.get('query', '')  # Retrieve the query parameter
+    # if query:  # Check if the query is not empty
+    #     # results = recommend_custom(query, salary, upper_bound_salary)
+    #     # 呼叫 recommend_job 函數來獲取推薦
+    #     results = await asyncio.to_thread(recommend_custom, query, salary, upper_bound_salary)
+
+    # else:
+    #     results = []
+
+    # return render_template('search_result.html', results=results)
 
 
 
@@ -158,4 +180,5 @@ def job_listing(new_random_string):
 if __name__ == '__main__':
     import psutil
     print(f"mem size of for loop before: {psutil.Process().memory_info().rss / 1024 / 1024}")
-    app.run(host="0.0.0.0", port=5050, debug=True)
+    app.run(host="0.0.0.0", port=5050 , debug=True)
+    #
