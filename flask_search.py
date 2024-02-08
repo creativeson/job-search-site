@@ -6,11 +6,13 @@ import asyncio
 import redis
 
 path.append('./job-algor/count')
+path.append('../job-algor/count')
 from text_to_job import recommend_custom
 # from url_to_job import recommend_more
 
 path.append('./job-algor/tfidf')
-from tfidf_text_to_job import recommend_custom_tfidf
+path.append('../job-algor/tfidf')
+# from tfidf_text_to_job import recommend_custom_tfidf
 from tfidf_url_to_job import recommend_more_tfidf
 
 
@@ -115,7 +117,6 @@ async def result():
 
     # selected_districts = request.args.getlist('district')
     # print(selected_districts)
-
     # 生成一個基於請求參數的唯一鍵
     cache_key = f"{query}:{salary}:{upper_bound_salary}"
      # 嘗試從Redis獲取緩存結果
@@ -132,6 +133,7 @@ async def result():
             redis_conn.set(cache_key, str(results), ex=3600)  # 例如，設置1小時的過期時間
         else:
             results = []
+    print(results)
 
     return render_template('search_result.html', results=results)
 
@@ -158,7 +160,7 @@ def job_listing(new_random_string):
     try:
         cursor.execute(
             '''SELECT title, company_name, job_description, 
-            salary_range, address, other_info, url 
+            salary_range, address, other_info, url, parse_date 
             FROM combined where new_random_string = %s AND 
             parse_date = (SELECT MAX(parse_date) FROM combined );''', (new_random_string,))
         job_data = cursor.fetchone()
@@ -181,4 +183,5 @@ if __name__ == '__main__':
     import psutil
     print(f"mem size of for loop before: {psutil.Process().memory_info().rss / 1024 / 1024}")
     app.run(host="0.0.0.0", port=5050 , debug=True)
+    print(f"mem size of for loop after: {psutil.Process().memory_info().rss / 1024 / 1024}")
     #

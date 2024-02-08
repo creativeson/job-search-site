@@ -7,7 +7,7 @@
   <style>
         .job-box {
             background-color: #454d55;
-            padding: 20px;
+            padding: 0px 100px 80px 120px;
             margin-top: 60px;
             margin-bottom: 50px;
             border-radius: 50px;
@@ -32,7 +32,7 @@
         <div class="job-box">
             <h1 class="job-title">{{ job[0] }}</h1><p class="job-content"><strong>薪資範圍:</strong>{{ job[3] }} <!-- <p class="job-content"><strong>工作內容:</strong></p> --><p class="job-content"><strong>公司名稱:</strong> {{ job[1] }}</p>{% if '104.com.tw' in job[6] %}{{ job[2]  }}
             {% else %}{{ job[2]  | safe}}{% endif %}</p><p class="job-content"><strong>公司地址:</strong> </p>{{ job[4] }}
-            <p class="job-content"><strong>其他:</strong> </p>{{ job[5] }}
+            <p class="job-content"><strong>其他:</strong> </p>{{ job[5] }}-{{ job[7]}}
         </div>
         <a href="{{ job[6] }}" target="_blank" class="btn btn-primary btn-lg position-fixed top-50 end-0 m-3"
            style="border-radius: 50%; background-color: #ADD8E6; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; color: #333; right: 20px; top: 20px">
