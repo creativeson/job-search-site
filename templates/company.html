@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% if companys %}
+{% set company = companys[0] %}
+{% block title %}{{ company.company_name }} {% endblock %}
+{% endif %}
+
+{% block content %}
+<div class="row justify-content-center">
+ 
+    <div class="col-md-8 companys-box">
+        <div style="height: 30px;"></div> <!-- Adjust the height as needed -->
+        {% if companys %}
+        {% set company = companys[0] %}
+        <h1>{{ company.company_name }}</h1>
+        {% endif %}
+        <!-- Iterate over companys and display them -->
+        <!-- {% set title_displayed = false %}
+        {% for company in companys %}
+            {% if company.company_name != None and not title_displayed  %}
+                {% set title_displayed = true %}
+            {% endif %} -->
+            <div class="company-item" style="position: relative;">
+                <a href="{{ url_for('job_listing', new_random_string=company.new_random_string) }}"
+                   target="_blank"
+                   style="text-decoration: none;">{{ company.title }}</a>
+                <span style="position: absolute; top: 5px; right: 20px;">{{ company.place }}</span>
+                <span style="position: absolute; bottom: -20px; right: 20px;">{{ company.salary_range }}</span>
+                <p>{{ company.description }}</p>
+            </div>
+        {% else %}
+            <!-- {% if not title_displayed %} -->
+                <!-- If there are no companies at all, display the custom message -->
+                <div class="company-item" style="text-align: center;">
+                    <p style="color: pink;">No companies found.</p>
+                </div>
+            <!-- {% endif %} -->
+        {% endfor %}
+        
+    </div>
+</div>
+   
+
+{% endblock %}

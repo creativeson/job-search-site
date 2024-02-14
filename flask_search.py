@@ -4,6 +4,9 @@ from flask import Flask, render_template, request, redirect, url_for
 from sys import path
 import asyncio
 import redis
+import datetime
+import re
+
 
 path.append('./job-algor/count')
 path.append('../job-algor/count')
@@ -92,15 +95,8 @@ def index():
     return render_template('index.html')
 
 
-# @app.route('/result', methods=['GET'])
-# def result():
-    # if request.method == 'GET':
-
-    #     salary = request.args.get('salary', '')
-    #     print(salary)
-
-    #     selected_districts = request.args.getlist('district')
-    #     print(selected_districts)
+# @app.route('/company', methods=['GET'])
+# def company():
     #     query = request.args.get('query', '')  # Retrieve the query parameter
     #     if query:  # Check if the query is not empty
     #         results = recommend_custom(query, selected_districts ) if query else []
@@ -121,6 +117,9 @@ async def result():
     cache_key = f"{query}:{salary}:{upper_bound_salary}"
      # 嘗試從Redis獲取緩存結果
     cached_results = redis_conn.get(cache_key)
+    # if cached_results:
+    #     print(f"found cache {cache_key}")
+    #     results = json.loads(cached_results)
     if cached_results:
         print(f"found cache {cache_key}")
         # 如果存在緩存，將字符串轉換回Python對象
@@ -177,6 +176,60 @@ def job_listing(new_random_string):
         cursor.close()
         conn.close()
     return render_template('job_listing.html', job=job_data, morejobs=morejobs)
+
+def filter_html_tags(text):
+  """
+  濾掉 HTML 標籤
+  """
+  pattern = re.compile(r'<.*?>')
+  return pattern.sub('', text)
+# from jieba import lcut
+
+@app.route('/company/<company_name>')
+def company(company_name):
+    conn = get_db_connection()
+    cursor = conn.cursor(buffered=True)
+    company_data = None  # Initialize job_data to None or a suitable default value
+    try:
+        cursor.execute(
+            '''SELECT title, company_name, job_description, 
+            salary_range, LEFT(address, 6) AS place, new_random_string, parse_date  
+            FROM combined where company_name= %s AND 
+            parse_date = (SELECT MAX(parse_date) FROM combined );''', (company_name,))
+        company_data = cursor.fetchall()
+        print(company_data)
+        jobs = []
+        for i in company_data:
+            job_row = i
+            # Check if the row itself is not None
+            if job_row is not None:
+                job_description = job_row[2] if job_row[2] is not None else """No job 
+                description available"""
+            else:
+                job_description = "No job description available"
+
+            # Check if job_description is not None before slicing
+            description = filter_html_tags(job_description[:120]) + "..." if job_description is not None else "..."
+
+            # Create a dictionary with the relevant information
+            result = {
+                "title": job_row[0],
+                'company_name': job_row[1],
+                "description": description,
+                "new_random_string": job_row[-2],
+                "place": job_row[-3],
+                "salary_range": job_row[-4],
+                "parse_date": job_row[-1],
+            }
+            # Append the dictionary to the results list
+            jobs.append(result)
+    except Error as err:
+        print(f"MySQL Error: {err}")
+
+    finally:
+        cursor.close()
+        conn.close()
+    return render_template('company.html', companys=jobs)
 
 
 if __name__ == '__main__':

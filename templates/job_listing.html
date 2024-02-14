@@ -5,6 +5,7 @@
 {% block content %}
 
   <style>
+    
         .job-box {
             background-color: #454d55;
             padding: 0px 100px 80px 120px;
@@ -13,6 +14,12 @@
             border-radius: 50px;
             white-space: pre-wrap;
         }
+                /* 对于屏幕宽度小于或等于 768px  */
+                @media (max-width: 1768px) {
+        .job-box {
+            padding: 0px 20px 20px 20px; /* 在小屏幕上使用较小的内边距 */
+        }
+}
         .job-title {
             color: #9bc3ff;
         }
@@ -30,7 +37,7 @@
     </style>
  <div class="container mt-4">
         <div class="job-box">
-            <h1 class="job-title">{{ job[0] }}</h1><p class="job-content"><strong>薪資範圍:</strong>{{ job[3] }} <!-- <p class="job-content"><strong>工作內容:</strong></p> --><p class="job-content"><strong>公司名稱:</strong> {{ job[1] }}</p>{% if '104.com.tw' in job[6] %}{{ job[2]  }}
+            <h1 class="job-title">{{ job[0] }}</h1><p class="job-content"><strong>薪資範圍:</strong>{{ job[3] }} <!-- <p class="job-content"><strong>工作內容:</strong></p> --><a href="{{ url_for('company', company_name=job[1]) }}" target="_blank" style="text-decoration: none;" class="job-content"><p ><strong>公司名稱:</strong> {{ job[1] }}</p></a>{% if '104.com.tw' in job[6] %}{{ job[2]  }}
             {% else %}{{ job[2]  | safe}}{% endif %}</p><p class="job-content"><strong>公司地址:</strong> </p>{{ job[4] }}
             <p class="job-content"><strong>其他:</strong> </p>{{ job[5] }}-{{ job[7]}}
         </div>
