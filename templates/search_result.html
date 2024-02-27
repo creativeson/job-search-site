@@ -3,7 +3,22 @@
 
 {% block content %}
     {% include 'search_box.html' %}
+
+  
     <!-- Results display section -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          {% for page_num in range(1, total_pages + 1) %}
+            {% if page_num == current_page %}
+              <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ page_num }}<span class="sr-only"></span></span>
+              </li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="{{ url_for('result', page=page_num, query=query, salary=salary, upper_bound_salary=upper_bound_salary) }}">{{ page_num }}</a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </nav>
     <div class="row justify-content-center">
         <div class="col-md-8 results-box">
             <!-- Iterate over results and display them -->

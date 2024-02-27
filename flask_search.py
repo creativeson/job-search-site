@@ -5,6 +5,7 @@ from sys import path
 import asyncio
 import redis
 import datetime
+import math
 import re
 
 
@@ -97,48 +98,47 @@ def index():
 
 @app.route('/result', methods=['GET'])
 async def result():
+    # 分頁參數
+    page = request.args.get('page', 1, type=int)  # 預設為第1頁
+    per_page = 20  # 每頁顯示20個項目
+
     upper_bound_salary = request.args.get('upper_bound_salary', '')
     salary = request.args.get('salary', '')
-    query = request.args.get('query', '')  # Retrieve the query parameter
-    #print(f"{upper_bound_salary},{salary},{query}")
+    query = request.args.get('query', '')
 
-    # selected_districts = request.args.getlist('district')
-    # print(selected_districts)
-    # 生成一個基於請求參數的唯一鍵
+    # 生成不包含頁碼的快取鍵
     cache_key = f"{query}:{salary}:{upper_bound_salary}"
-     # 嘗試從Redis獲取緩存結果
+
+    # 嘗試獲取快取的結果集
     cached_results = redis_conn.get(cache_key)
-    # if cached_results:
-    #     print(f"found cache {cache_key}")
-    #     results = json.loads(cached_results)
     if cached_results:
-        print(f"found cache {cache_key}")
-        # 如果存在緩存，將字符串轉換回Python對象
-        results = eval(cached_results)  # 注意：使用eval()需要謹慎，確保數據安全
-        
-        if len(results) > 20:
-            # 安全地訪問前20個元素
-            selected_elements = results[:20]
-        else:
-            # 如果列表元素不足20個，則直接使用整個列表
-            selected_elements = results
+        print(f"找到整個結果集的快取 {cache_key}")
+        results = eval(cached_results)  # 使用更安全的反序列化方法是更好的選擇
     else:
+        # 如果沒有快取，則調用函數獲取結果，並快取整個結果集
         if query:
-            # 如果沒有緩存，執行計算
             results = await asyncio.to_thread(recommend_custom, query, salary, upper_bound_salary)
-            # 將結果存儲到Redis，並設置過期時間
-            redis_conn.set(cache_key, str(results), ex=3600)  # 例如，設置1小時的過期時間
-            if len(results) > 20:
-                # 安全地訪問前20個元素
-                selected_elements = results[:20]
-            else:
-                # 如果列表元素不足20個，則直接使用整個列表
-                selected_elements = results
+            redis_conn.set(cache_key, str(results), ex=3600)  # 快取整個結果集
         else:
             results = []
-    print(len(results))
 
-    return render_template('search_result.html', results=results)
+    total_results = len(results)
+    total_pages = math.ceil(total_results / per_page)  # 計算總頁數
+
+    # 計算當前頁顯示的資料範圍
+    start = (page - 1) * per_page
+    end = start + per_page
+    page_results = results[start:end]
+
+    return render_template(
+        'search_result.html',
+        results=page_results,
+        total_pages=total_pages,
+        current_page=page,
+        query=query,
+        salary=salary,
+        upper_bound_salary=upper_bound_salary
+    )
 
 
 
