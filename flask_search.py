@@ -95,15 +95,6 @@ def index():
     return render_template('index.html')
 
 
-# @app.route('/company', methods=['GET'])
-# def company():
-    #     query = request.args.get('query', '')  # Retrieve the query parameter
-    #     if query:  # Check if the query is not empty
-    #         results = recommend_custom(query, selected_districts ) if query else []
-    #         return render_template('search_result.html', results=results)
-    # query = request.args.get('query', '')  # Retrieve the query parameter
-    # results = recommend_custom(query) if query else []
-    # return render_template('search_result.html', results=results)
 @app.route('/result', methods=['GET'])
 async def result():
     upper_bound_salary = request.args.get('upper_bound_salary', '')
@@ -124,28 +115,30 @@ async def result():
         print(f"found cache {cache_key}")
         # 如果存在緩存，將字符串轉換回Python對象
         results = eval(cached_results)  # 注意：使用eval()需要謹慎，確保數據安全
+        
+        if len(results) > 20:
+            # 安全地訪問前20個元素
+            selected_elements = results[:20]
+        else:
+            # 如果列表元素不足20個，則直接使用整個列表
+            selected_elements = results
     else:
         if query:
             # 如果沒有緩存，執行計算
             results = await asyncio.to_thread(recommend_custom, query, salary, upper_bound_salary)
             # 將結果存儲到Redis，並設置過期時間
             redis_conn.set(cache_key, str(results), ex=3600)  # 例如，設置1小時的過期時間
+            if len(results) > 20:
+                # 安全地訪問前20個元素
+                selected_elements = results[:20]
+            else:
+                # 如果列表元素不足20個，則直接使用整個列表
+                selected_elements = results
         else:
             results = []
-    print(results)
+    print(len(results))
 
     return render_template('search_result.html', results=results)
-
-    # query = request.args.get('query', '')  # Retrieve the query parameter
-    # if query:  # Check if the query is not empty
-    #     # results = recommend_custom(query, salary, upper_bound_salary)
-    #     # 呼叫 recommend_job 函數來獲取推薦
-    #     results = await asyncio.to_thread(recommend_custom, query, salary, upper_bound_salary)
-
-    # else:
-    #     results = []
-
-    # return render_template('search_result.html', results=results)
 
 
 
@@ -167,7 +160,7 @@ def job_listing(new_random_string):
         url = job_data[6]
         print(url)
         morejobs = recommend_more_tfidf(url)
-        print(morejobs[0])
+        print("利用url more job的第一筆資料",morejobs[0])
 
     except Error as err:
         print(f"MySQL Error: {err}")
