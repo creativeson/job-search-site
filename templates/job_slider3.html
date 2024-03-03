@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* CSS styles go here */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .slider-container {
+/* <!--            position: fixed;--> */
+            bottom: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease;
+
+        }
+        .slide {
+            /* min-width: 33.33%; Each slide is 1/3rd of the container */
+            box-sizing: border-box;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            margin:10px;
+
+            margin-bottom: 20px; /* Add margin to create a gap between slides */
+            padding: 10px; /* Add padding if needed to separate content inside each slide */
+            border: 1px solid #ccc; /* Optional: Add a border to visually separate slides */
+        }
+
+                /* 手机或较小屏幕设备 */
+        @media screen and (max-width: 768px) {
+            .slide {
+                min-width: 100%; /* 在较小屏幕上，每个slide占满整个宽度 */
+            }
+        }
+
+        /* 电脑或较大屏幕设备 */
+        @media screen and (min-width: 768px) {
+            .slide {
+                min-width: 33.33%; /* 在较大屏幕上，每个slide占宽度的1/3 */
+            }
+        }
+
+        .slide a{
+          text-decoration: none; /* Remove the default underline */
+            color: white; /* Optional: Set the link color */
+            }
+
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+        }
+
+        .slide h2 {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .slide p.company {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .slide p.description {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .slide-button {
+            position: fixed;
+            bottom: 20px;
+            background-color: #ddd;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .left {
+            left: 100px;
+        }
+
+        .right {
+            right: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slider">
+            <!-- Slide Group 1 -->
+             <!-- Iterate over results and display them -->
+            {% for job in morejobs %}
+            <div class="slide">
+                <a href="{{ url_for('job_listing', new_random_string=job.new_random_string)}}" target="_blank">
+                    <div class="slide-header">
+                        <h5>{{ job.title }}</h5>
+                        <p class="company">{{ job.company }}</p>
+                        <div class="additional-info">
+                            <div class="row">
+                                    <div class="col">
+                                    <p class="place">{{ job.place }}</p> <!-- Add job.place -->
+                                </div>
+                                <div class="col">
+                                    <p class="salary">{{ job.salary_range }}</p> <!-- Add job.salary_range -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="description">{{ job.description }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <button class="slide-button left" onclick="moveSlide(-1)">&#10094;</button>
+    <button class="slide-button right" onclick="moveSlide(1)">&#10095;</button>
+
+    <script>
+        
+        // JavaScript goes here
+        let currentSlide = 0;
+        let startTouchPosition = 0;
+
+        function moveSlide(direction) {
+            const slides = document.querySelectorAll(".slide");
+            // 根据屏幕宽度决定一次滑动多少个幻灯片
+            const slidesPerGroup = window.innerWidth >= 768 ? 3 : 1;
+            const totalSlideGroups = Math.ceil(slides.length / slidesPerGroup);
+
+            currentSlide += direction;
+
+            if (currentSlide >= totalSlideGroups) {
+                currentSlide = 0;
+            } else if (currentSlide < 0) {
+                currentSlide = totalSlideGroups - 1;
+            }
+
+            // 计算每次滑动的距离，使其基于slidesPerGroup动态变化
+            const slider = document.querySelector(".slider");
+            slider.style.transform = `translateX(-${currentSlide * (100 / slidesPerGroup) * slidesPerGroup}%)`;
+}
+
+
+    // 添加触摸事件的监听器
+    function setupTouchListeners() {
+        const slider = document.querySelector(".slider");
+
+        slider.addEventListener('touchstart', (e) => {
+            startTouchPosition = e.touches[0].clientX;
+        }, false);
+
+        slider.addEventListener('touchend', (e) => {
+            const endTouchPosition = e.changedTouches[0].clientX;
+            const difference = startTouchPosition - endTouchPosition;
+
+            // 判断滑动方向
+            if (difference > 50) { // 向左滑动
+                moveSlide(1);
+            } else if (difference < -50) { // 向右滑动
+                moveSlide(-1);
+            }
+        }, false);
+    }
+
+    // 当文档加载完成后，设置触摸监听器
+    document.addEventListener('DOMContentLoaded', setupTouchListeners);
+    </script>
+</body>
+</html>
