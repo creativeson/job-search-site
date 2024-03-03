@@ -91,6 +91,16 @@
                     <div class="slide-header">
                         <h5>{{ job.title }}</h5>
                         <p class="company">{{ job.company }}</p>
+                        <div class="additional-info">
+                            <div class="row">
+                                    <div class="col">
+                                    <p class="place">{{ job.place }}</p> <!-- Add job.place -->
+                                </div>
+                                <div class="col">
+                                    <p class="salary">{{ job.salary_range }}</p> <!-- Add job.salary_range -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <p class="description">{{ job.description }}</p>
                 </a>
@@ -98,6 +108,7 @@
             {% endfor %}
         </div>
     </div>
+    
     <button class="slide-button left" onclick="moveSlide(-1)">&#10094;</button>
     <button class="slide-button right" onclick="moveSlide(1)">&#10095;</button>
 
@@ -146,22 +157,6 @@
 
     // 当文档加载完成后，设置触摸监听器
     document.addEventListener('DOMContentLoaded', setupTouchListeners);
-
-        // function moveSlide(direction) {
-        //     const slides = document.querySelectorAll(".slide");
-        //     const totalSlideGroups = Math.ceil(slides.length / 3);
-
-        //     currentSlide += direction;
-
-        //     if (currentSlide >= totalSlideGroups) {
-        //         currentSlide = 0;
-        //     } else if (currentSlide < 0) {
-        //         currentSlide = totalSlideGroups - 1;
-        //     }
-
-        //     const slider = document.querySelector(".slider");
-        //     slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-        // }
     </script>
 </body>
 </html>

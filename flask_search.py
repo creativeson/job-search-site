@@ -5,7 +5,7 @@ from sys import path
 import asyncio
 import redis
 import datetime
-import math
+import math, random
 import re
 
 
@@ -86,14 +86,49 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/', methods=['GET'])
+@app.route('/')
 def index():
-    if request.method == 'GET':
-        query = request.args.get('query', '')  # Retrieve the query parameter
+    #morejobs = None
+    conn = get_db_connection()
+    cursor = conn.cursor(buffered=True)
+    #job_data = None  # Initialize job_data to None or a suitable default value
 
-        if query:  # Check if the query is not empty
-            return redirect(url_for('result'))  # Redirect to /result with query
-    return render_template('index.html')
+    try:
+        cursor.execute(
+            '''SELECT url
+            FROM combined where 
+            parse_date = (SELECT MAX(parse_date) FROM combined );''')
+        url_data = cursor.fetchall()
+
+        # 檢查 url_data 是否為空值
+        if url_data:
+            # 從 url_data 中隨機選擇
+            selected_url = random.choice(url_data)[0]  
+        else:
+            print("没有找到任何URL")
+        # recommend more job base on the current url
+     
+        print(selected_url)
+        morejobs = recommend_more_tfidf(selected_url)
+        print("index.html中利用url more job的第一筆資料",morejobs[0])
+        print("共有幾筆資料",len(morejobs))
+
+    except Error as err:
+        print(f"MySQL Error: {err}")
+
+    finally:
+        cursor.close()
+        conn.close()
+    # if request.method == 'GET':
+    #     query = request.args.get('query', '')  # Retrieve the query parameter
+
+    #     if query:  # Check if the query is not empty
+    #         return redirect(url_for('result'))  # Redirect to /result with query
+    # return render_template('index.html')
+    query = request.args.get('query', '')  # Retrieve the query parameter
+    if query:  # Check if the query is not empty
+        return redirect(url_for('result'))  # Redirect to /result with query
+    return render_template('index.html', morejobs=morejobs)
 
 
 @app.route('/result', methods=['GET'])
