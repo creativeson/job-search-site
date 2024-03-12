@@ -10,12 +10,12 @@ import re
 
 
 path.append('./job-algor/count')
-path.append('../job-algor/count')
+#path.append('../job-algor/count')
 from text_to_job import recommend_custom
 # from url_to_job import recommend_more
 
 path.append('./job-algor/tfidf')
-path.append('../job-algor/tfidf')
+#path.append('../job-algor/tfidf')
 # from tfidf_text_to_job import recommend_custom_tfidf
 from tfidf_url_to_job import recommend_more_tfidf
 
@@ -263,6 +263,8 @@ def company(company_name):
 if __name__ == '__main__':
     import psutil
     print(f"mem size of for loop before: {psutil.Process().memory_info().rss / 1024 / 1024}")
-    app.run(host="0.0.0.0", port=5050 , debug=True)
+    app.run(host="0.0.0.0", port=5050)
+    #app.run(host="0.0.0.0", port=5050 , debug=True)
+
     print(f"mem size of for loop after: {psutil.Process().memory_info().rss / 1024 / 1024}")
     #

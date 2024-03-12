@@ -5,7 +5,7 @@
                   <h1>搜尋關鍵字</h1>
                 <form action="/result" method="GET">
                     <div class="mb-3">
-                      <input type="text" name="query" class="form-control" placeholder="請輸入你會的IT技能" id="query" oninput="checkLength()">
+                      <input type="text" name="query" class="form-control" placeholder="請輸入你會的技能" id="query" oninput="checkLength()">
                     </div>
 
                 <!-- Salary Constraint Input -->
@@ -63,7 +63,7 @@
             }
         }
     document.addEventListener("DOMContentLoaded", function () {
-  // 获取select元素
+  // 獲取select元素
   const upperBoundSalarySelect = document.getElementById("upper_bound_salary");
   const minSalarySelect = document.getElementById("min_salary");
   const queryInput = document.getElementById("query");
@@ -73,7 +73,7 @@
   const savedMinSalary = localStorage.getItem("min_salary");
   const savedQuery = localStorage.getItem("query");
 
-  // 如果有保存的值，则将它们设置为select元素的值
+  // 如果有保存的值，將它们設置为select元素的值
   if (savedUpperBoundSalary) {
     upperBoundSalarySelect.value = savedUpperBoundSalary;
   }
@@ -86,7 +86,7 @@
     queryInput.value = savedQuery;
   }
 
-  // 监听select元素和输入框的变化事件，以保存新的值
+  // 監聽select元素和输入框的变化事件，以保存新的值
   upperBoundSalarySelect.addEventListener("change", function () {
     localStorage.setItem("upper_bound_salary", upperBoundSalarySelect.value);
   });
