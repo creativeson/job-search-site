@@ -7,6 +7,8 @@ import redis
 import datetime
 import math, random
 import re
+from blueprints.auth import auth_bp
+
 
 
 path.append('./job-algor/count')
@@ -44,47 +46,12 @@ def get_db_connection():
     conn = connect(**config)
     return conn
 
+# 註冊Blueprint
+app.register_blueprint(auth_bp, url_prefix='/auth')
+
 @app.route('/about')
 def about():
     return render_template('about.html')
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        # 從表單獲取數據
-        user_id = request.form['id']
-        password = request.form['password']
-        confirm_password = request.form['confirm_password']
-        email = request.form['email']
-        name = request.form['name']
-        gender = request.form['gender']
-        education = request.form['education']
-        school = request.form['school']
-        experience = request.form['experience']
-
-        # 檢查 ID 是否存在於資料庫
-        conn = connect(**config)
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
-        user = cursor.fetchone()
-
-        # 檢查密碼是否匹配和其他驗證...
-        # ...
-
-        if user:
-            # 使用者ID已存在
-            return "ID已存在，請重新輸入"
-        else:
-            # 註冊用戶
-            cursor.execute(
-                "INSERT INTO users (id, password, email, name, gender, education, school, experience) VALUES (%s, %s, "
-                "%s, %s, %s, %s, %s, %s)",
-                (user_id, password, email, name, gender, education, school, experience))
-            conn.commit()
-            return "註冊成功"
-
-    return render_template('register.html')
-
 
 @app.route('/')
 def index():
